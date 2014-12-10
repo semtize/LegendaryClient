@@ -40,8 +40,8 @@ namespace LegendaryClient.Windows
         {
             InitializeComponent();
             Version.TextChanged += WaterTextbox_TextChanged;
-            if (Client.Version == "4.18.1" || Client.Version == "0.0.0")	
-                Client.Version = "4.20.1";
+            if (Client.Version == "4.20.1" || Client.Version == "0.0.0")	
+                Client.Version = "4.21.14";
             bool x = Properties.Settings.Default.DarkTheme;
             if (!x)
             {
@@ -89,7 +89,7 @@ namespace LegendaryClient.Windows
                 c.icon = new BitmapImage(Source);
                 Debugger.Log(0, "Log", "Requesting :" + c.name + " champ");
                 
-                Champions.InsertExtraChampData(c);
+                //Champions.InsertExtraChampData(c); //why was this ever here? all of the needed info is already in the sqlite file
             }
             Client.ChampionSkins = (from s in Client.SQLiteDatabase.Table<championSkins>()
                                     orderby s.name
@@ -329,6 +329,17 @@ namespace LegendaryClient.Windows
                 newCredentials.IpAddress = GetNewIpAddress();
                 newCredentials.Locale = Client.Region.Locale;
                 newCredentials.Domain = "lolclient.lol.riotgames.com";
+                //Almost like the lol client now
+                string os = Environment.OSVersion.ToString();
+                string[] ossplit = os.Split('.');
+                if (ossplit[0] == "Windows 8")
+                {
+                    if (ossplit[1] == "1")
+                        os = "Windows 8.1";
+                }
+                else
+                    os = ossplit[0];
+                newCredentials.OperatingSystem = os;
 
                 Session login = await Client.PVPNet.Login(newCredentials);
                 Client.PlayerSession = login;
@@ -342,9 +353,11 @@ namespace LegendaryClient.Windows
                 Client.ChatClient.SSL = true;
                 Client.ChatClient.User = LoginUsernameBox.Text;
                 Client.ChatClient.Password = "AIR_" + LoginPasswordBox.Password;
+                Client.userpass = new KeyValuePair<String, String>(LoginUsernameBox.Text, "AIR_" + LoginPasswordBox.Password);
                 Client.ChatClient.OnInvalidCertificate += Client.ChatClient_OnInvalidCertificate;
                 Client.ChatClient.OnMessage += Client.ChatClient_OnMessage;
                 Client.ChatClient.OnPresence += Client.ChatClient_OnPresence;
+                Client.ChatClient.OnDisconnect += Client.ChatClient_OnDisconnect;
                 Client.ChatClient.Connect();
 
                 Client.RostManager = new RosterManager();

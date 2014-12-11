@@ -99,6 +99,9 @@ namespace LegendaryClient.Logic
             return settings;
         }
 
+        public static bool InstaCall = false;
+        public static string CallString = "";
+
         public static Brush Change()
         {
             string y = Settings.Default.Theme;
@@ -291,6 +294,7 @@ namespace LegendaryClient.Logic
 
         internal static ReplayRecorder Autorecorder;
 
+
         internal static List<string> Whitelist = new List<string>();
 
         #region Chat
@@ -359,11 +363,11 @@ namespace LegendaryClient.Logic
                 MainWin.Dispatcher.BeginInvoke(DispatcherPriority.Input, new ThreadStart(() =>
                 {
                     var subject = (ChatSubjects) Enum.Parse(typeof (ChatSubjects), msg.Subject, true);
-                    //NotificationPopup pop = new NotificationPopup(subject, msg);
-                    //pop.Height = 230;
-                    //pop.HorizontalAlignment = HorizontalAlignment.Right;
-                    //pop.VerticalAlignment = VerticalAlignment.Bottom;
-                    //Client.NotificationGrid.Children.Add(pop);
+                    NotificationPopup pop = new NotificationPopup(subject, msg);
+                    pop.Height = 230;
+                    pop.HorizontalAlignment = HorizontalAlignment.Right;
+                    pop.VerticalAlignment = VerticalAlignment.Bottom;
+                    Client.NotificationGrid.Children.Add(pop);
                 }));
 
                 return;
@@ -776,25 +780,18 @@ namespace LegendaryClient.Logic
         /// </summary>
         internal static void SwitchPage(Page page)
         {
-<<<<<<< HEAD
-            if (page.GetType() == typeof(PlayPage)) IsOnPlayPage = true;
-            else IsOnPlayPage = false;
-            if (page.GetType() == typeof(ChampSelectPage)) BackgroundImage.Visibility = Visibility.Hidden;
-            else BackgroundImage.Visibility = Visibility.Visible;
-            if (page.GetType() == typeof(MainPage))
-            {
-                Page p = Pages.FirstOrDefault(x => x.GetType() == typeof(MainPage));
-                if(p != null)
-                {
-                    (p as MainPage).UpdateSummonerInformation();
-                }
-            }
-=======
             IsOnPlayPage = page.GetType() == typeof (PlayPage);
             BackgroundImage.Visibility = page.GetType() == typeof (ChampSelectPage)
                 ? Visibility.Hidden
                 : Visibility.Visible;
->>>>>>> origin/master
+            if (page.GetType() == typeof (MainPage))
+            {
+                Page p = Pages.FirstOrDefault(x => x.GetType() == typeof (MainPage));
+
+                var mainPage = p as MainPage;
+                if (mainPage != null)
+                    mainPage.UpdateSummonerInformation();
+            }
 
             TrueCurrentPage = page;
 
@@ -1215,7 +1212,7 @@ namespace LegendaryClient.Logic
                 {
                     WorkingDirectory = GameDirectory,
                     FileName = Path.Combine(GameDirectory, "League of Legends.exe"),
-                    Arguments = "\"8393\" \"LoLLauncher.exe\" \"\" \"spectator "
+                    Arguments = "\"8394\" \"LoLLauncher.exe\" \"\" \"spectator "
                                 + SpectatorServer + " "
                                 + Key + " "
                                 + GameId + " "
